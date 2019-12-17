@@ -23,10 +23,11 @@ generate_flags(HEXAHEDRON_COMPILE_FLAGS "native" 2 true)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}${HEXAHEDRON_COMPILE_FLAGS}")
 
 #find_package(lambdacommon REQUIRED)
+find_package(GLM REQUIRED)
 find_package(GLFW REQUIRED)
 find_package(Vulkan REQUIRED)
 
-include_directories(${LAMBDACOMMON_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
+include_directories(${LAMBDACOMMON_INCLUDE_DIRS} ${GLM_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
 
 # All files:
 # There is the C++ header files.
@@ -35,14 +36,14 @@ set(HEADER_FILES include/hexahedron/hexahedron.hpp)
 set(SOURCE_FILES src/hexahedron.cpp)
 
 # Now build the executable.
-add_executable(hexahedron ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(hexahedron GLFW::GLFW Vulkan::Vulkan)
+add_library(hexahedron ${HEADER_FILES} ${SOURCE_FILES})
 # Generate the version header and include it.
 generate_version_header("HEXAHEDRON" "hexahedron" ${HEXAHEDRON_VERSION_MAJOR} ${HEXAHEDRON_VERSION_MINOR} ${HEXAHEDRON_VERSION_PATCH} "${HEXAHEDRON_VERSION_TYPE}")
 target_include_directories(hexahedron PUBLIC ${CMAKE_BINARY_DIR}/exports)
 
 # Let's ignore that for now, may delete later.
 if (LAMBDA_WASM)
-    set_target_properties(hexahderon PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 -s FULL_ES2=1 -s USE_GLFW=3")
+    set_target_properties(hexahedron PROPERTIES LINK_FLAGS "-s WASM=1 -s USE_WEBGL2=1 -s FULL_ES2=1 -s USE_GLFW=3")
 endif ()
 
+add_subdirectory(client)
